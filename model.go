@@ -111,18 +111,82 @@ func (b *Board) openBoard(row, column int) (bool, error) {
 		cell.isOpened = true
 		return false, nil
 	}
-	// todo implement open cell without blackhole
-
+	if cell.amountAdjacentBlackHole > 0 {
+		cell.isOpened = true
+		return true, nil
+	}
+	b.openAdjacent(b.getClosedAdjacement(loc))
 	return true, nil
 }
 
-func (b Board) showMap() {
+func (b *Board) getClosedAdjacement(loc Location) []Location {
+	startColumn, finishColumn := b.adjacentIndexes(loc.Column, b.Columns)
+	startRow, finishRow := b.adjacentIndexes(loc.Row, b.Rows)
+	var result []Location
+	for r := startRow; r <= finishRow; r++ {
+		for c := startColumn; c <= finishColumn; c++ {
+			la := Location{r, c}
+			cell, ok := b.Map[la]
+			if !ok {
+				cell = &Cell{}
+				b.Map[la] = cell
+			}
+			if !cell.isOpened {
+				result = append(result, la)
+			}
+		}
+	}
+	return result
+}
+
+func (b *Board) openAdjacent(locs []Location) {
+	for _, loc := range locs {
+		cell, ok := b.Map[loc]
+		if !ok {
+			cell = &Cell{
+				amountAdjacentBlackHole: 0,
+				isOpened:                true,
+			}
+			b.Map[loc] = cell
+			b.openAdjacent(b.getClosedAdjacement(loc))
+			continue
+		}
+		cell.isOpened = true
+		if cell.amountAdjacentBlackHole == 0 {
+			b.openAdjacent(b.getClosedAdjacement(loc))
+		}
+	}
+}
+
+func (b *Board) showMap() {
 	for r := 0; r < b.Rows; r++ {
 		row := ""
 		for c := 0; c < b.Columns; c++ {
 			cell, ok := b.Map[Location{r, c}]
 			if !ok {
 				row += " 0 "
+				continue
+			}
+			if cell.blackHole {
+				row += " * "
+				continue
+			}
+			row += fmt.Sprintf(" %d ", cell.amountAdjacentBlackHole)
+		}
+		fmt.Println(row)
+	}
+}
+func (b *Board) showRealMap() {
+	for r := 0; r < b.Rows; r++ {
+		row := ""
+		for c := 0; c < b.Columns; c++ {
+			cell, ok := b.Map[Location{r, c}]
+			if !ok {
+				row += " - "
+				continue
+			}
+			if !cell.isOpened {
+				row += " - "
 				continue
 			}
 			if cell.blackHole {
