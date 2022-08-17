@@ -6,17 +6,20 @@ import (
 	"time"
 )
 
+// Location struct that represents cell position on board
 type Location struct {
 	Row    int
 	Column int
 }
 
+// Cell struct that represents information about cell
 type Cell struct {
 	blackHole               bool
 	amountAdjacentBlackHole int
 	isOpened                bool
 }
 
+// Board struct that represents infoirmation about board
 type Board struct {
 	Rows       int
 	Columns    int
@@ -24,6 +27,11 @@ type Board struct {
 	Map        map[Location]*Cell
 }
 
+// NewBoard returns new implementation of Board by given parameters
+// rows - amount of rows in board
+// columns - amount columns in board
+// blackHoles amount blackholes on board
+// returns error if amount of blackhole greater than board cells
 func NewBoard(rows, columns, blackHoles int) (*Board, error) {
 	if blackHoles > rows*columns {
 		return nil, fmt.Errorf("no math blackholes")
@@ -44,7 +52,6 @@ func NewBoard(rows, columns, blackHoles int) (*Board, error) {
 			i--
 			continue
 		}
-
 		b.Map[loc] = &Cell{
 			blackHole:               true,
 			amountAdjacentBlackHole: 0,
@@ -84,6 +91,7 @@ func (b *Board) fillAdjacent(loc *Location) {
 		}
 	}
 }
+
 func (b Board) showMap() {
 	for r := 0; r < b.Rows; r++ {
 		row := ""
