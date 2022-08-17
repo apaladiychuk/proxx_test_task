@@ -92,6 +92,30 @@ func (b *Board) fillAdjacent(loc *Location) {
 	}
 }
 
+func (b *Board) openBoard(row, column int) (bool, error) {
+	if row >= b.Rows {
+		return false, fmt.Errorf("row index out of range ")
+	}
+	if column >= b.Columns {
+		return false, fmt.Errorf("column index out of range ")
+	}
+	loc := Location{row, column}
+	cell, ok := b.Map[loc]
+	if !ok {
+		cell = &Cell{amountAdjacentBlackHole: 0}
+	}
+	if cell.isOpened {
+		return true, nil
+	}
+	if cell.blackHole {
+		cell.isOpened = true
+		return false, nil
+	}
+	// todo implement open cell without blackhole
+
+	return true, nil
+}
+
 func (b Board) showMap() {
 	for r := 0; r < b.Rows; r++ {
 		row := ""
