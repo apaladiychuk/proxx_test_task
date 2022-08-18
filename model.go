@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const attemptKoef = 10
+
 // Location struct that represents cell position on board
 type Location struct {
 	Row    int
@@ -43,13 +45,18 @@ func NewBoard(rows, columns, blackHoles int) (*Board, error) {
 		Map:        make(map[Location]*Cell),
 	}
 	rnd := rand.New(rand.NewSource(time.Now().Unix()))
+	attempts := blackHoles * attemptKoef
 	for i := 0; i < blackHoles; i++ {
+		if attempts == 0 {
+			return nil, fmt.Errorf("can not create board with given amount of blackholes")
+		}
 		loc := Location{
 			Row:    int(rnd.Float64() * float64(rows)),
 			Column: int(rnd.Float64() * float64(rows)),
 		}
-		if _, ok := b.Map[loc]; ok {
+		if cell, ok := b.Map[loc]; ok && cell.blackHole {
 			i--
+			attempts--
 			continue
 		}
 		b.Map[loc] = &Cell{

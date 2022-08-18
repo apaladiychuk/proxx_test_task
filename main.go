@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	b, err := NewBoard(10, 10, 10)
+	b, err := NewBoard(10, 10, 90)
 	if err != nil {
 		fmt.Printf("ERR : %v ", err)
 		return

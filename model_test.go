@@ -17,5 +17,4 @@ func TestNewBoard(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, b)
 	})
-
 }
