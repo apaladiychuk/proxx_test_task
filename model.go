@@ -159,7 +159,7 @@ func (b *Board) openAdjacent(locs []Location) {
 			continue
 		}
 		cell.isOpened = true
-		if cell.amountAdjacentBlackHole == 0 {
+		if cell.amountAdjacentBlackHole == 0 && !cell.blackHole {
 			b.openAdjacent(b.getClosedAdjacement(loc))
 		}
 	}
