@@ -100,10 +100,10 @@ func (b *Board) fillAdjacent(loc *Location) {
 }
 
 func (b *Board) openBoard(row, column int) (bool, error) {
-	if row >= b.Rows {
+	if row >= b.Rows || row < 0 {
 		return false, fmt.Errorf("row index out of range ")
 	}
-	if column >= b.Columns {
+	if column >= b.Columns || column < 0 {
 		return false, fmt.Errorf("column index out of range ")
 	}
 	loc := Location{row, column}
